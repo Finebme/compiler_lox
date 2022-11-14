@@ -78,8 +78,11 @@ class Scanner {
 			case '/': 
 				if(match('/')){
 					while(peek()!='\n' && !isAtEnd()) advance();
+				}else if(match('*')){
+					while(peek()!='*' && peekNext()!='/') advance();
+					current += 2;
 				}else{
-				i	addToken(SLASH);
+					addToken(SLASH);
 				}
 				break;
 			case '"':
@@ -90,7 +93,7 @@ class Scanner {
 				}else if(isAlpha(c)){
 					identifier();
 				}else{
-					Lox.error(line,"Unexpected character.")
+					Lox.error(line,"Unexpected character.");
 				}
 				break;
 		}
@@ -103,10 +106,10 @@ class Scanner {
 		addToken(IDENTIFIER);
 	}
 	private boolean isAlpha(char c){
-		return (c>='a' && c<='z') || (c>='A' && c<='Z') || c=='_'
+		return (c>='a' && c<='z') || (c>='A' && c<='Z') || c=='_';
 	}
-	private boolean isAlphaNumberic(char c){
-		return isAlpha(c) || isDigit(c)
+	private boolean isAlphaNumeric(char c){
+		return isAlpha(c) || isDigit(c);
 	}
 	private void string(){
 		while(peek()!='"' && !isAtEnd()){
@@ -126,8 +129,8 @@ class Scanner {
 		return c>='0' && c<='9';
 	}
 	private void number(){
-		while(idDigit(peek())) advance();
-		if(peek()=='.' && idDigit(peekNext())){
+		while(isDigit(peek())) advance();
+		if(peek()=='.' && isDigit(peekNext())){
 			advance();
 			while(isDigit(peek())) advance();
 		}
@@ -155,7 +158,7 @@ class Scanner {
 	}
 	private boolean match(char expected){
 		if(isAtEnd()) return false;
-		if(source.carAt(current)!=expected) return false;
+		if(source.charAt(current)!=expected) return false;
 		current++;
 		return true;
 	}
