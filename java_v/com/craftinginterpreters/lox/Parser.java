@@ -13,7 +13,7 @@ class Parser{
 	}
 	Expr parse(){
 		try{
-			return expression();
+			return expressions();
 		}catch(ParseError error){
 			return null;
 		}
@@ -71,6 +71,13 @@ class Parser{
 		return tokens.get(current-1);
 	}
 
+	private Expr expressions(){
+		Expr expr = expression();
+		while(match(COMMA)){
+			expr = expression();
+		}
+		return expr;
+	}
 	private Expr expression() {
 		return equality();
 	}
