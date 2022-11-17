@@ -53,10 +53,13 @@ public class Lox{
 		}
 		System.out.println("lex->end----------------------------------------------------");
 		Parser parser = new Parser(tokens);
-		Expr expression = parser.parse();
+		List<Stmt> statements = parser.parse();
 		if(hadError) return;
-		System.out.println(new AstPrinter().print(expression));
-		interpreter.interpret(expression);
+		interpreter.interpret(statements);
+		//Expr expression = parser.parse();
+		//if(hadError) return;
+		//System.out.println(new AstPrinter().print(expression));
+		//interpreter.interpret(expression);
 	}
 	static void error(int line,String message){
 		report(line,"",message);

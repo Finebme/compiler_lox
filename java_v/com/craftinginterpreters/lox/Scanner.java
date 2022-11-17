@@ -102,8 +102,9 @@ class Scanner {
 		while(isAlphaNumeric(peek())) advance();
 		String text = source.substring(start,current);
 		TokenType type = keywords.get(text);
+		if(type!=null) System.out.println("keyword found"+type.toString());
 		if(type==null) type = IDENTIFIER;
-		addToken(IDENTIFIER);
+		addToken(type);
 	}
 	private boolean isAlpha(char c){
 		return (c>='a' && c<='z') || (c>='A' && c<='Z') || c=='_';
@@ -162,34 +163,4 @@ class Scanner {
 		current++;
 		return true;
 	}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }
