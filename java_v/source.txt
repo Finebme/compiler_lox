@@ -6,6 +6,7 @@
 ./com/craftinginterpreters/lox/RuntimeError.java
 ./com/craftinginterpreters/lox/Parser.java
 ./com/craftinginterpreters/lox/Scanner.java
+./com/craftinginterpreters/lox/Environment.java
 ./com/craftinginterpreters/lox/Expr.java
 ./com/craftinginterpreters/lox/AstPrinter.java
 ./com/craftinginterpreters/lox/Token.java

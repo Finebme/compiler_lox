@@ -13,8 +13,10 @@ public class GenerateStmt{
 		}
 		String outputDir = args[0];
 		defineAst(outputDir,"Stmt",Arrays.asList(
+			"Block : List<Stmt> statements",
 			"Expression: Expr expression",
-			"Print: Expr expression"
+			"Print: Expr expression",
+			"Var: Token name,Expr initializer"
 		));
 	}
 	private static void defineAst(String outputDir,String baseName,List<String> types) throws IOException{
