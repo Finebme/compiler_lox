@@ -110,7 +110,36 @@ class Parser{
 		if(match(PRINT)) return printStatement();
 		if(match(WHILE)) return whileStatement();
 		if(match(LEFT_BRACE)) return new Stmt.Block(block());
+		if(match(CONTINUE)) return continueStatement();
+		if(match(BREAK)) return breakStatement();
 		return expressionStatement();
+	}
+	private Stmt continueStatement(){
+		consume(SEMICOLON,"continue require ends with ';'");
+		jumpOver();
+		return new Stmt.Continue(); 
+	}
+	private Stmt breakStatement(){
+		consume(SEMICOLON,"break require ends with ';'");
+		jumpOver();
+		return new Stmt.Break();
+	}
+	private void jumpOver(){
+		int needRightParenCount = 1;
+		while(needRightParenCount != 0){
+			TokenType currentToken = peek().type;	
+			System.out.println("jumpOver "+currentToken.toString());
+			if(currentToken == LEFT_BRACE){
+				needRightParenCount += 1;
+				continue;
+			}
+			if(currentToken == RIGHT_BRACE){
+				needRightParenCount -= 1;
+				continue;
+			}
+			System.out.println("jumpOver "+needRightParenCount);
+			advance();	
+		}
 	}
 	private Stmt forStatement(){
 		consume(LEFT_PAREN,"Expect '(' after 'for'.");

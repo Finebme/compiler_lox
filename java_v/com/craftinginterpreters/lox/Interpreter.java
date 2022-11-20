@@ -10,6 +10,16 @@ class Interpreter implements Expr.Visitor<Object>,Stmt.Visitor<Void>{
 		return null;
 	}
 	@Override
+	public Void visitContinueStmt(Stmt.Continue stmt){
+		environment.setJumpPoint(TokenType.CONTINUE);
+		return null;	
+	}
+	@Override
+	public Void visitBreakStmt(Stmt.Break stmt){
+		environment.setJumpPoint(TokenType.BREAK);
+		return null;	
+	}
+	@Override
 	public Void visitVarStmt(Stmt.Var stmt){
 		Object value = null;
 		if(stmt.initializer != null){
@@ -61,7 +71,13 @@ class Interpreter implements Expr.Visitor<Object>,Stmt.Visitor<Void>{
 	@Override
 	public Void visitWhileStmt(Stmt.While stmt){
 		while(isTruthy(evaluate(stmt.condition))){
+			this.environment.setWhileTrue();
 			execute(stmt.body);
+			if(this.environment.needBreak){
+				this.environment.needBreak = false;
+				this.environment.needContinue =false;
+				break;
+			}
 		}
 		return null;
 	}
@@ -128,8 +144,33 @@ class Interpreter implements Expr.Visitor<Object>,Stmt.Visitor<Void>{
 		Environment previous = this.environment;
 		try{
 			this.environment = environment;
-			for(Stmt statement:statements){
+			for(int i = 0;i<statements.size();i++){
+				Stmt statement = statements.get(i);	
 				execute(statement);
+				if(previous.getIsWhile()){
+					System.out.println("previous is while: "+environment.needContinue+" "+environment.needBreak);
+					if(environment.needContinue){
+						System.out.println("while + continue");
+						i = 0;
+						environment.needContinue = false;
+						previous.needContinue = true;
+						continue;
+					} 
+					if(environment.needBreak){
+						System.out.println("while + break");
+						environment.needBreak = false;
+						previous.needBreak = true;
+						return;
+					}
+				}else{
+					System.out.println("previous in not while: "+environment.needContinue+" "+environment.needBreak);
+					if(this.environment.needContinue || this.environment.needBreak){
+						System.out.println("nowhile + continue/break");
+						this.environment.needContinue = false;
+						this.environment.needBreak = false;
+						return;
+					}
+				}
 			}
 		}finally{
 			this.environment = previous;

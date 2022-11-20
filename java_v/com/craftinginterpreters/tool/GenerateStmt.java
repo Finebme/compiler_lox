@@ -18,7 +18,9 @@ public class GenerateStmt{
 			"If: Expr condition, Stmt thenBranch, Stmt elseBranch",
 			"Print: Expr expression",
 			"Var: Token name,Expr initializer",
-			"While: Expr condition,Stmt body"
+			"While: Expr condition,Stmt body",
+			"Continue: ",
+			"Break: "
 		));
 	}
 	private static void defineAst(String outputDir,String baseName,List<String> types) throws IOException{
@@ -60,6 +62,9 @@ public class GenerateStmt{
 		writer.println("		"+className+"("+fieldsList+"){");
 		String[] fields = fieldsList.split(",");
 		for (String field:fields){
+			if(field.trim().equals("")){
+				continue;
+			}
 			String name = field.trim().split(" ")[1].trim();
 			writer.println("			this."+name+" = "+name+";");
 		}
@@ -70,6 +75,9 @@ public class GenerateStmt{
 		writer.println("			return visitor.visit"+className+baseName+"(this);");
 		writer.println("		}");
 		for(String field:fields){
+			if(field.trim().equals("")){
+				continue;
+			}
 			writer.println("		final "+field+";");
 		}
 		writer.println("	}");
