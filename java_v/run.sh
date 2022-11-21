@@ -1,2 +1,8 @@
 #!/bin/bash
-java com/craftinginterpreters/lox/Lox
+echo $1
+if [ $1 -eq '1' ]
+then
+	java com/craftinginterpreters/lox/Lox
+else
+	java com/craftinginterpreters/lox/Lox ./test.lox
+fi

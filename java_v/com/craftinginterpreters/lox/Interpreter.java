@@ -148,24 +148,19 @@ class Interpreter implements Expr.Visitor<Object>,Stmt.Visitor<Void>{
 				Stmt statement = statements.get(i);	
 				execute(statement);
 				if(previous.getIsWhile()){
-					System.out.println("previous is while: "+environment.needContinue+" "+environment.needBreak);
 					if(environment.needContinue){
-						System.out.println("while + continue");
 						i = 0;
 						environment.needContinue = false;
 						previous.needContinue = true;
 						continue;
 					} 
 					if(environment.needBreak){
-						System.out.println("while + break");
 						environment.needBreak = false;
 						previous.needBreak = true;
 						return;
 					}
 				}else{
-					System.out.println("previous in not while: "+environment.needContinue+" "+environment.needBreak);
 					if(this.environment.needContinue || this.environment.needBreak){
-						System.out.println("nowhile + continue/break");
 						this.environment.needContinue = false;
 						this.environment.needBreak = false;
 						return;
