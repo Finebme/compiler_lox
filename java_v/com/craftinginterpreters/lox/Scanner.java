@@ -63,7 +63,7 @@ class Scanner {
 			case '}': addToken(RIGHT_BRACE); break;
 			case ',': addToken(COMMA); break;
 			case '.': addToken(DOT); break;
-			case '-': addToken(MINUS); break;
+			case '-': addToken(match('>')?MINUS:ARROW); break;
 			case '+': addToken(PLUS); break;
 			case ';': addToken(SEMICOLON); break;
 			case '*': addToken(STAR); break; 				

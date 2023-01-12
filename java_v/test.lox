@@ -1,6 +1,7 @@
-for(var a=0;a<10;a=a+1){
-	if(a!=3){
-		continue;
-	}
+fun add(a,b){
 	print(a);
+	pirnt(b);
+	print(a+b);
 }
+
+add(2,3);

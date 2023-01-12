@@ -20,7 +20,8 @@ public class GenerateStmt{
 			"Var: Token name,Expr initializer",
 			"While: Expr condition,Stmt body",
 			"Continue: ",
-			"Break: "
+			"Break: ",
+			"Function : Token name, List<Token> params, List<Stmt> body"	
 		));
 	}
 	private static void defineAst(String outputDir,String baseName,List<String> types) throws IOException{

@@ -1,8 +1,26 @@
 package com.craftinginterpreters.lox;
 import java.util.List;
+import java.util.ArrayList;
 
 class Interpreter implements Expr.Visitor<Object>,Stmt.Visitor<Void>{
 	private Environment environment = new Environment();
+	final Environment globalEnv = new Environment();
+
+	Interpreter(){
+		globalEnv.define("clock",new LoxCallable(){
+			public int arity(){
+				return 0;
+			}
+			public Object call(Interpreter interpreter,List<Object> arguments){
+				return (double)System.currentTimeMillis()/1000.0;
+			}
+			public String toString(){
+				return "<native fn>";
+			}
+		
+		});
+		
+	}
 
 	@Override
 	public Void visitBlockStmt(Stmt.Block stmt){
@@ -138,6 +156,30 @@ class Interpreter implements Expr.Visitor<Object>,Stmt.Visitor<Void>{
 			case BANG_EQUAL: return !isEqual(left,right);
 			case EQUAL_EQUAL: return isEqual(left,right);
 		}
+		return null;
+	}
+	@Override
+	public Object visitCallExpr(Expr.Call expr){
+		Object callee = evaluate(expr.callee);
+
+		List<Object> arguments = new ArrayList<>();
+		for(Expr argument: expr.arguments){
+			arguments.add(evaluate(argument));
+		}	
+
+		if(!(callee instanceof LoxCallable)){
+			throw new RuntimeError(expr.paren, "Ca only call functions or classes");
+		}
+		LoxCallable function = (LoxCallable)callee;
+		if(arguments.size() != function.arity()){
+			throw new RuntimeError(expr.paren,"Expected "+function.arity() + " arguments but got " + arguments.size()+".");
+		}
+		return function.call(this, arguments);
+	}
+	@Override
+	public Void visitFunctionStmt(Stmt.Function stmt){
+		LoxFunction function = new LoxFunction(stmt);
+		globalEnv.define(stmt.name.lexeme,function);
 		return null;
 	}
 	void executeBlock(List<Stmt> statements,Environment environment){

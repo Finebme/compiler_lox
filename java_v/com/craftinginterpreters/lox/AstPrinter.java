@@ -20,6 +20,10 @@ class AstPrinter implements Expr.Visitor<String> {
 		return expr.accept(this);
 	}
 	@Override
+	public String visitCallExpr(Expr.Call call){
+		return "";
+	}
+	@Override
 	public String visitAssignExpr(Expr.Assign expr){
 		return parenthesize(expr.name.lexeme,expr.value);
 	}

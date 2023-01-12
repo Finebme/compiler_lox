@@ -27,11 +27,11 @@ class Environment{
 		Environment cur = this;
 		while(!isNearestWhile){
 			if(type == TokenType.CONTINUE){
-				System.out.println("setJumpPoint: cur.needContinue");
+				//System.out.println("setJumpPoint: cur.needContinue");
 				cur.needContinue = true;
 			}
 			if(type == TokenType.BREAK){
-				System.out.println("setJumpPoint: cur.needBreak");
+				//System.out.println("setJumpPoint: cur.needBreak");
 				cur.needBreak = true;		
 			}
 			cur = cur.enclosing;

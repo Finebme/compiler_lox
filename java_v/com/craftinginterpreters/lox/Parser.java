@@ -29,6 +29,7 @@ class Parser{
 	}
 	private Stmt declaration(){
 		try{
+			if(match(FUN)) return function("function");
 			if(match(VAR)) return varDeclaration();
 			return statement();
 		}catch(ParseError error){
@@ -45,6 +46,38 @@ class Parser{
 		consume(SEMICOLON,"Expect ';' after variable declaration.");
 		return new Stmt.Var(name,initializer);
 	}
+	private Stmt.Function function(String kind){
+		System.out.println("1002: "+" enter parser function");
+		Token name = consume(IDENTIFIER,"Expect" + kind + " name.");
+		consume(LEFT_PAREN, "Expect '(' after "+ kind + " name ");
+		List<Token> parameters = new ArrayList<>();
+		if(!check(RIGHT_PAREN)){
+			do{
+				if(parameters.size() >= 100){
+					error(peek(), "too many params");
+				}
+				parameters.add(consume(IDENTIFIER,"Expect parameter name."));
+			}while(match(COMMA));	
+		}
+		consume(RIGHT_PAREN,"Expect ')' after parems");
+		consume(LEFT_BRACE, "Expect '{' before " + kind + " body.");
+		List<Stmt> body = block();
+		System.out.println("1001: "+ new Stmt.Function(name,parameters,body));
+		return new Stmt.Function(name,parameters,body);
+	}
+	private Stmt.Function lambdaFunc(){
+		List<Token> arguments = new ArrayList<>();
+		if(!check(RIGHT_PAREN)){
+			do{
+				arguments.add(consume(IDENTIFIER,"EXPECT PARANETER LAMBDAFUNC"));
+			}while(match(COMMA));
+		}
+		Token paren = consume(RIGHT_PAREN,"Expect ')' after arguments.");
+		Token rightArrow = consume(ARROW,"Expect RIGHT arrow");
+		List<Stmt> body = block();
+		return new Stmt.Function(new Token(TokenType.ARROW,System.currentTimeMillis()+"",null,0),arguments,body);
+	}
+
 	private boolean match(TokenType... types){
 		for(TokenType type:types){
 			if(check(type)){
@@ -112,6 +145,7 @@ class Parser{
 		if(match(LEFT_BRACE)) return new Stmt.Block(block());
 		if(match(CONTINUE)) return continueStatement();
 		if(match(BREAK)) return breakStatement();
+		if(match(LEFT_PAREN)) return lambdaFunc();
 		return expressionStatement();
 	}
 	private Stmt continueStatement(){
@@ -128,7 +162,7 @@ class Parser{
 		int needRightParenCount = 1;
 		while(needRightParenCount != 0){
 			TokenType currentToken = peek().type;	
-			System.out.println("jumpOver "+currentToken.toString());
+			//System.out.println("jumpOver "+currentToken.toString());
 			if(currentToken == LEFT_BRACE){
 				needRightParenCount += 1;
 				continue;
@@ -137,7 +171,7 @@ class Parser{
 				needRightParenCount -= 1;
 				continue;
 			}
-			System.out.println("jumpOver "+needRightParenCount);
+			//System.out.println("jumpOver "+needRightParenCount);
 			advance();	
 		}
 	}
@@ -286,7 +320,29 @@ class Parser{
 			Expr right = unary();
 			return new Expr.Unary(operator,right);
 		}
-		return primary();
+		return call();
+	}
+	private Expr call(){
+		Expr expr = primary();
+		while(true){
+			if(match(LEFT_PAREN)){
+				expr = finishCall(expr);
+			}else{
+				break;
+			}
+		}	
+		return expr;
+	}
+	private Expr finishCall(Expr callee){
+		List<Expr> arguments = new ArrayList<>();
+		if(!check(RIGHT_PAREN)){
+			do{
+				arguments.add(expression());
+			}while(match(COMMA));
+		}
+		Token paren = consume(RIGHT_PAREN,"Expect ')' after arguments.");
+		System.out.println("1003: "+" call");
+		return new Expr.Call(callee,paren,arguments);
 	}
 	private Expr primary(){
 		if(match(FALSE)) return new Expr.Literal(false);
