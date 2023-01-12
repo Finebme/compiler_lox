@@ -3,11 +3,11 @@ import java.util.List;
 import java.util.ArrayList;
 
 class Interpreter implements Expr.Visitor<Object>,Stmt.Visitor<Void>{
-	private Environment environment = new Environment();
-	final Environment globalEnv = new Environment();
+	final Environment globals = new Environment();
+	private Environment environment = globals;
 
 	Interpreter(){
-		globalEnv.define("clock",new LoxCallable(){
+		environment.define("clock",new LoxCallable(){
 			public int arity(){
 				return 0;
 			}
@@ -54,7 +54,10 @@ class Interpreter implements Expr.Visitor<Object>,Stmt.Visitor<Void>{
 	}
 	@Override
 	public Object visitVariableExpr(Expr.Variable expr){
-		return environment.get(expr.name);
+		Object object = environment.get(expr.name);
+		if(null == object) {
+		}
+		return object;
 	}
 	@Override
 	public Void visitExpressionStmt(Stmt.Expression stmt){
@@ -179,7 +182,7 @@ class Interpreter implements Expr.Visitor<Object>,Stmt.Visitor<Void>{
 	@Override
 	public Void visitFunctionStmt(Stmt.Function stmt){
 		LoxFunction function = new LoxFunction(stmt);
-		globalEnv.define(stmt.name.lexeme,function);
+		environment.define(stmt.name.lexeme,function);
 		return null;
 	}
 	void executeBlock(List<Stmt> statements,Environment environment){
