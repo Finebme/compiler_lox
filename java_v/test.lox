@@ -1,6 +1,6 @@
 fun add(a,b){
 	print(a);
-	pirnt(b);
+	print(b);
 	print(a+b);
 }
 
